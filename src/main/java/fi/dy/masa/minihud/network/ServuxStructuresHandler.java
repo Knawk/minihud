@@ -29,7 +29,7 @@ public abstract class ServuxStructuresHandler<T extends CustomPayload> implement
             ServuxStructuresHandler.INSTANCE.receivePlayPayload(payload, context);
         }
     };
-    public static ServuxStructuresHandler<ServuxStructuresPacket.Payload> getInstance() { return INSTANCE; }
+//    public static ServuxStructuresHandler<ServuxStructuresPacket.Payload> getInstance() { return INSTANCE; }
 
     public static final Identifier CHANNEL_ID = Identifier.of("servux", "structures");
 

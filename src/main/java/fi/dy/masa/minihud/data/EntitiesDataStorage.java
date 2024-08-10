@@ -40,7 +40,7 @@ public class EntitiesDataStorage implements IClientTickHandler
         return INSTANCE;
     }
 
-    private final static ServuxEntitiesHandler<ServuxEntitiesPacket.Payload> HANDLER = ServuxEntitiesHandler.getInstance();
+//    private final static ServuxEntitiesHandler<ServuxEntitiesPacket.Payload> HANDLER = ServuxEntitiesHandler.getInstance();
     private final static MinecraftClient mc = MinecraftClient.getInstance();
     private int uptimeTicks = 0;
     private boolean servuxServer = false;
@@ -75,11 +75,11 @@ public class EntitiesDataStorage implements IClientTickHandler
             if (Configs.Generic.ENTITY_DATA_SYNC.getBooleanValue() == false)
             {
                 this.serverTickTime = System.currentTimeMillis();
-                if (DataStorage.getInstance().hasIntegratedServer() == false && this.hasServuxServer())
-                {
-                    this.servuxServer = false;
-                    HANDLER.unregisterPlayReceiver();
-                }
+//                if (DataStorage.getInstance().hasIntegratedServer() == false && this.hasServuxServer())
+//                {
+//                    this.servuxServer = false;
+//                    HANDLER.unregisterPlayReceiver();
+//                }
                 return;
             }
             else if (DataStorage.getInstance().hasIntegratedServer() == false &&
@@ -88,7 +88,7 @@ public class EntitiesDataStorage implements IClientTickHandler
                     this.getWorld() != null)
             {
                 // Make sure we're Play Registered, and request Metadata
-                HANDLER.registerPlayReceiver(ServuxEntitiesPacket.Payload.ID, HANDLER::receivePlayPayload);
+//                HANDLER.registerPlayReceiver(ServuxEntitiesPacket.Payload.ID, HANDLER::receivePlayPayload);
                 this.requestMetadata();
             }
 
@@ -143,18 +143,18 @@ public class EntitiesDataStorage implements IClientTickHandler
         return null;
     }
 
-    public IPluginClientPlayHandler<ServuxEntitiesPacket.Payload> getNetworkHandler()
-    {
-        return HANDLER;
-    }
+//    public IPluginClientPlayHandler<ServuxEntitiesPacket.Payload> getNetworkHandler()
+//    {
+//        return HANDLER;
+//    }
 
     public void reset(boolean isLogout)
     {
         if (isLogout)
         {
             MiniHUD.printDebug("EntitiesDataStorage#reset() - log-out");
-            HANDLER.reset(this.getNetworkChannel());
-            HANDLER.resetFailures(this.getNetworkChannel());
+//            HANDLER.reset(this.getNetworkChannel());
+//            HANDLER.resetFailures(this.getNetworkChannel());
             this.servuxServer = false;
             this.hasInValidServux = false;
         }
@@ -206,16 +206,16 @@ public class EntitiesDataStorage implements IClientTickHandler
 
     public void onGameInit()
     {
-        ClientPlayHandler.getInstance().registerClientPlayHandler(HANDLER);
-        HANDLER.registerPlayPayload(ServuxEntitiesPacket.Payload.ID, ServuxEntitiesPacket.Payload.CODEC, IPluginClientPlayHandler.BOTH_CLIENT);
+//        ClientPlayHandler.getInstance().registerClientPlayHandler(HANDLER);
+//        HANDLER.registerPlayPayload(ServuxEntitiesPacket.Payload.ID, ServuxEntitiesPacket.Payload.CODEC, IPluginClientPlayHandler.BOTH_CLIENT);
     }
 
     public void onWorldPre()
     {
-        if (DataStorage.getInstance().hasIntegratedServer() == false)
-        {
-            HANDLER.registerPlayReceiver(ServuxEntitiesPacket.Payload.ID, HANDLER::receivePlayPayload);
-        }
+//        if (DataStorage.getInstance().hasIntegratedServer() == false)
+//        {
+//            HANDLER.registerPlayReceiver(ServuxEntitiesPacket.Payload.ID, HANDLER::receivePlayPayload);
+//        }
     }
 
     public void onWorldJoin()
@@ -225,14 +225,14 @@ public class EntitiesDataStorage implements IClientTickHandler
 
     public void requestMetadata()
     {
-        if (DataStorage.getInstance().hasIntegratedServer() == false &&
-            Configs.Generic.ENTITY_DATA_SYNC.getBooleanValue())
-        {
-            NbtCompound nbt = new NbtCompound();
-            nbt.putString("version", Reference.MOD_STRING);
-
-            HANDLER.encodeClientData(ServuxEntitiesPacket.MetadataRequest(nbt));
-        }
+//        if (DataStorage.getInstance().hasIntegratedServer() == false &&
+//            Configs.Generic.ENTITY_DATA_SYNC.getBooleanValue())
+//        {
+//            NbtCompound nbt = new NbtCompound();
+//            nbt.putString("version", Reference.MOD_STRING);
+//
+//            HANDLER.encodeClientData(ServuxEntitiesPacket.MetadataRequest(nbt));
+//        }
     }
 
     public boolean receiveServuxMetadata(NbtCompound data)
@@ -322,7 +322,7 @@ public class EntitiesDataStorage implements IClientTickHandler
             return;
         }
 
-        HANDLER.encodeClientData(ServuxEntitiesPacket.BlockEntityRequest(pos));
+//        HANDLER.encodeClientData(ServuxEntitiesPacket.BlockEntityRequest(pos));
     }
 
     private void requestServuxEntityData(int entityId)
@@ -332,7 +332,7 @@ public class EntitiesDataStorage implements IClientTickHandler
             return;
         }
 
-        HANDLER.encodeClientData(ServuxEntitiesPacket.EntityRequest(entityId));
+//        HANDLER.encodeClientData(ServuxEntitiesPacket.EntityRequest(entityId));
     }
 
     @Nullable
