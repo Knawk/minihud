@@ -319,9 +319,35 @@ public class RenderHandler implements IRenderer
             return;
         }
 
-        if (type == InfoToggle.FPS)
+        if (type == InfoToggle.FPS || type == InfoToggle.PING)
         {
-            this.addLineI18n("minihud.info_line.fps", MinecraftClient.getInstance().getCurrentFps());
+            // Don't add the same line multiple times
+            if (this.addedTypes.contains(InfoToggle.FPS) ||
+                    this.addedTypes.contains(InfoToggle.PING))
+            {
+                return;
+            }
+
+            String pre = "";
+            StringBuilder str = new StringBuilder(64);
+
+            if (InfoToggle.FPS.getBooleanValue()) {
+                str.append(StringUtils.translate("minihud.info_line.fps", MinecraftClient.getInstance().getCurrentFps()));
+                pre = " / ";
+            }
+            if (InfoToggle.PING.getBooleanValue()) {
+                PlayerListEntry info = mc.player.networkHandler.getPlayerListEntry(mc.player.getUuid());
+                if (info != null)
+                {
+                    str.append(pre);
+                    str.append(StringUtils.translate("minihud.info_line.ping", info.getLatency()));
+                }
+            }
+
+            this.addLine(str.toString());
+
+            this.addedTypes.add(InfoToggle.FPS);
+            this.addedTypes.add(InfoToggle.PING);
         }
         else if (type == InfoToggle.MEMORY_USAGE)
         {
@@ -503,15 +529,6 @@ public class RenderHandler implements IRenderer
             if (mobCapData.getHasValidData())
             {
                 this.addLine(mobCapData.getFormattedInfoLine());
-            }
-        }
-        else if (type == InfoToggle.PING)
-        {
-            PlayerListEntry info = mc.player.networkHandler.getPlayerListEntry(mc.player.getUuid());
-
-            if (info != null)
-            {
-                this.addLineI18n("minihud.info_line.ping", info.getLatency());
             }
         }
         else if (type == InfoToggle.COORDINATES ||

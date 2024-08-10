@@ -827,7 +827,7 @@
     "minihud.info_line.mobcap.cap.water_creature.full": "§b§l%s§r§b / %s§r",
     "minihud.info_line.mobcap.cap.water_creature.nonfull": "§b%s / %s§r",
 
-    "minihud.info_line.ping": "Ping: %d ms",
+    "minihud.info_line.ping": "%d ms",
     "minihud.info_line.coordinates.exception": "broken coordinate format string!",
     "minihud.info_line.coordinates.format": "XYZ: %.2f / %.4f / %.2f",
     "minihud.info_line.coordinates_scaled.overworld": "Overworld: ",
