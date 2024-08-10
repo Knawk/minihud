@@ -691,23 +691,6 @@ public class RenderHandler implements IRenderer
             this.addLineI18n("minihud.info_line.distance",
                     dist, entity.getX() - ref.x, entity.getY() - ref.y, entity.getZ() - ref.z, ref.x, ref.y, ref.z);
         }
-        else if (type == InfoToggle.FACING)
-        {
-            Direction facing = entity.getHorizontalFacing();
-            String facingName = StringUtils.translate("minihud.info_line.facing." + facing.getName() + ".name");
-            String str;
-            if (facingName.contains("minihud.info_line.facing." + facing.getName() + ".name"))
-            {
-                facingName = facing.name();
-                str = StringUtils.translate("minihud.info_line.invalid_value");
-            }
-            else
-            {
-                str = StringUtils.translate("minihud.info_line.facing." + facing.getName());
-            }
-
-            this.addLineI18n("minihud.info_line.facing", facingName, str);
-        }
         else if (type == InfoToggle.LIGHT_LEVEL)
         {
             WorldChunk clientChunk = this.getClientChunk(chunkPos);
@@ -791,29 +774,61 @@ public class RenderHandler implements IRenderer
         }
         else if (type == InfoToggle.ROTATION_YAW ||
                  type == InfoToggle.ROTATION_PITCH ||
+                 type == InfoToggle.FACING ||
                  type == InfoToggle.SPEED)
         {
             // Don't add the same line multiple times
             if (this.addedTypes.contains(InfoToggle.ROTATION_YAW) ||
                 this.addedTypes.contains(InfoToggle.ROTATION_PITCH) ||
+                this.addedTypes.contains(InfoToggle.FACING) ||
                 this.addedTypes.contains(InfoToggle.SPEED))
             {
                 return;
             }
 
             String pre = "";
-            StringBuilder str = new StringBuilder(128);
+            StringBuilder str = new StringBuilder(256);
 
             if (InfoToggle.ROTATION_YAW.getBooleanValue())
             {
-                str.append(StringUtils.translate("minihud.info_line.rotation_yaw", MathHelper.wrapDegrees(entity.getYaw())));
+                String yawStr = StringUtils.translate("minihud.info_line.rotation_yaw", MathHelper.wrapDegrees(entity.getYaw()));
+                str.append(pre).append(subFullWidthSpaces(yawStr));
                 pre = " / ";
             }
 
             if (InfoToggle.ROTATION_PITCH.getBooleanValue())
             {
-                str.append(pre).append(StringUtils.translate("minihud.info_line.rotation_pitch", MathHelper.wrapDegrees(entity.getPitch())));
+                String pitchStr = StringUtils.translate("minihud.info_line.rotation_pitch", MathHelper.wrapDegrees(entity.getPitch()));
+                str.append(pre).append(subFullWidthSpaces(pitchStr));
                 pre = " / ";
+            }
+
+            if (InfoToggle.FACING.getBooleanValue()) {
+                float yaw = entity.getYaw() % 360.0f;
+                if (yaw < 0) yaw += 360.0f;
+
+                String nsInitial = "\u2002";
+                String ewInitial = "\u2002";
+                String xAxis = "\u2002";
+                String zAxis = "\u2002";
+                if (yaw < 60 || yaw > 300) {
+                    nsInitial = "S";
+                    zAxis = "+";
+                }
+                if (yaw > 30 && yaw < 150) {
+                    ewInitial = "W";
+                    xAxis = "-";
+                }
+                if (yaw > 120 && yaw < 240) {
+                    nsInitial = "N";
+                    zAxis = "-";
+                }
+                if (yaw > 210 && yaw < 330) {
+                    ewInitial = "E";
+                    xAxis = "+";
+                }
+
+                str.append(pre).append(StringUtils.translate("minihud.info_line.facing", nsInitial + ewInitial, xAxis + zAxis));
             }
 
             if (InfoToggle.SPEED.getBooleanValue())
@@ -829,6 +844,7 @@ public class RenderHandler implements IRenderer
 
             this.addedTypes.add(InfoToggle.ROTATION_YAW);
             this.addedTypes.add(InfoToggle.ROTATION_PITCH);
+            this.addedTypes.add(InfoToggle.FACING);
             this.addedTypes.add(InfoToggle.SPEED);
         }
         else if (type == InfoToggle.SPEED_HV)
@@ -1328,5 +1344,9 @@ public class RenderHandler implements IRenderer
 
             return this.position < other.position ? -1 : (this.position > other.position ? 1 : 0);
         }
+    }
+
+    private static String subFullWidthSpaces(String s) {
+        return s.replace(" ", "\u2002");
     }
 }
